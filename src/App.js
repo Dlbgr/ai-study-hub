@@ -1,6 +1,8 @@
- import React, { useState } from "react";
+import React, { useState } from "react";
 
-const topics = [
+// ─── ENGLISH CONTENT ────────────────────────────────────────────────────────
+
+const topicsEN = [
   {
     id: "llm",
     icon: "🧠",
@@ -357,14 +359,425 @@ const topics = [
   }
 ];
 
-const allSubtopics = topics.flatMap(t => t.subtopics.map(s => ({ ...s, topicId: t.id })));
+// ─── GERMAN CONTENT ─────────────────────────────────────────────────────────
+
+const topicsDE = [
+  {
+    id: "llm",
+    icon: "🧠",
+    label: "Wie LLMs funktionieren",
+    color: "#6366f1",
+    light: "#eef2ff",
+    subtopics: [
+      {
+        id: "llm-1",
+        title: "Was ein LLM ist (und nicht ist)",
+        preview: "Statistische Vorhersage vs. Verstehen — die wichtigste Unterscheidung zuerst.",
+        content: {
+          explanation: "Ein Large Language Model ist eine statistische Vorhersage-Engine. Zu jeder Textsequenz hat es gelernt — durch Training auf riesigen Mengen schriftlichen Materials —, welche Wörter und Phrasen wahrscheinlich folgen. Es erzeugt Ausgaben, indem es wiederholt das plausibelste nächste Token vorhersagt. Entscheidend ist: Dies ist Mustererkennung in enormem Maßstab, kein Verstehen. Das Modell versteht nicht, was es schreibt; es erzeugt Text, der statistisch konsistent damit ist, wie Menschen über ein Thema schreiben.",
+          analogy: "Stellen Sie sich eine extrem ausgefeilte Textvervollständigung vor, die fast alles Geschriebene verarbeitet hat. Sie kennt nicht die Bedeutung von Wörtern — sie weiß, welche Wörter in welchen Kontexten auf andere folgen. Bitten Sie sie, 'Die Hauptstadt von Frankreich ist…' zu vervollständigen, und sie sagt 'Paris' voraus — nicht weil sie Geographie kennt, sondern weil diese Vervollständigung überwältigend in ihren Trainingsdaten vorkommt.",
+          implication: "Gehen Sie nie davon aus, dass das Modell Ihre Absicht versteht. Explizite, spezifische Anweisungen werden immer vagen oder impliziten überlegen sein. Das Modell vervollständigt Ihren Prompt — es liest keine Gedanken. Alles, was Sie mehrdeutig lassen, füllt es mit seinem eigenen statistischen Standard."
+        }
+      },
+      {
+        id: "llm-2",
+        title: "Training auf hohem Niveau",
+        preview: "Daten, Muster, Gewichtungen — ohne die Mathematik.",
+        content: {
+          explanation: "Training beinhaltet das Aussetzen des Modells gegenüber enormen Textmengen und das Anpassen von Milliarden numerischer Parameter — genannt Gewichtungen — um Vorhersagefehler im Laufe der Zeit zu reduzieren. Durch diesen Prozess werden Muster, Assoziationen und Strukturen aus den Trainingsdaten in den Gewichtungen des Modells kodiert. Nach dem Training sind diese Gewichtungen festgesetzt — sie repräsentieren alles, was das Modell 'weiß'. Das Modell kann seine Gewichtungen während der Verwendung nicht aktualisieren.",
+          analogy: "Stellen Sie sich vor, ein Wachssiegel wird Millionen Male mit verschiedenen Prägungen gedrückt, jedes Mal mit leichter Formkorrektur. Das endgültige Siegel spiegelt die Gesamtheit aller dieser Korrekturen wider. Sobald das Wachs aushärtet — das Training abgeschlossen ist — ist das Siegel gesetzt. Keine Prägung bei normalem Gebrauch ändert die zugrunde liegende Form.",
+          implication: "Das Wissen des Modells ist am Ende des Trainings eingefroren. Es kann aus Ihrem Gespräch keine neuen Informationen lernen, es sei denn, es wurden Abruf-Tools bereitgestellt. Deshalb sind Wissens-Abschneidezeitpunkte wichtig, und deshalb ist das direkte Angeben aktueller Informationen im Prompt die praktische Lösung."
+        }
+      },
+      {
+        id: "llm-3",
+        title: "Tokens und Kontextfenster",
+        preview: "Warum Token-Limits eine operative Einschränkung sind, nicht nur ein technisches Detail.",
+        content: {
+          explanation: "Modelle verarbeiten keine Wörter — sie verarbeiten Tokens, die Textblöcke sind, die im Durchschnitt ungefähr drei Viertel eines Wortes entsprechen. Das Kontextfenster ist die gesamte Textmenge — sowohl Eingabe als auch Ausgabe zusammen —, die ein Modell in einer einzigen Interaktion verarbeiten kann. Aktuelle Frontier-Modelle unterstützen Kontextfenster von 100.000 bis 1.000.000 Tokens. Innerhalb dieses Fensters ist alles für das Modell gleichzeitig sichtbar; darüber hinaus geht früherer Inhalt verloren.",
+          analogy: "Das Kontextfenster ist das Arbeitsgedächtnis. So wie eine Person bei einer komplexen Aufgabe nur so viele Informationen aktiv im Kopf halten kann, kann das Modell nur beachten, was in sein Fenster passt. Lange Dokumente, umfangreiche Gesprächsverläufe und detaillierte Anweisungen konkurrieren alle um denselben begrenzten Raum.",
+          implication: "Für lange Workflows, komplexe Dokumente oder mehrstufige Gespräche ist das Kontextmanagement eine operative Fähigkeit. Kritische Anweisungen früh in einem sehr langen Gespräch können weniger Gewicht tragen als erwartet. System-Prompts — die oben platziert sind und persistieren — sind der richtige Ort für stabile Regeln und Einschränkungen."
+        }
+      },
+      {
+        id: "llm-4",
+        title: "Temperatur und Sampling",
+        preview: "Was Zufälligkeit bei Ausgaben bedeutet und wann es für Ihre Arbeit wichtig ist.",
+        content: {
+          explanation: "Temperatur ist eine Einstellung, die steuert, wie das Modell sein nächstes Token auswählt. Bei Temperatur 0 wählt es immer die wahrscheinlichste Option — Ausgaben sind konsistent und deterministisch. Mit steigender Temperatur werden Optionen mit geringerer Wahrscheinlichkeit verfügbar — Ausgaben werden abwechslungsreicher und kreativer, aber auch anfälliger für Abweichungen von erwarteten Mustern. Die meisten Produktionssysteme arbeiten zwischen 0 und 1.",
+          analogy: "Temperatur ist ein Regler zwischen 'strenger Textvervollständigung' und 'freiem Jazz'. Bei null liest das Modell von einem Skript. Bei hohen Einstellungen improvisiert es. Beide haben legitime Verwendungszwecke — der Fehler besteht darin, die falsche Einstellung für die Aufgabe zu verwenden.",
+          implication: "Für Protokolle, die zuverlässige, strukturierte und konsistente Ausgaben erfordern — Klassifizierung, Extraktion, Formatierung, Zusammenfassung — verwenden Sie niedrige Temperatur. Für Brainstorming oder kreative Generierung erzeugt eine höhere Einstellung abwechslungsreichere Ergebnisse. Wenn Sie unvorhersehbare Ausgaben von einem Protokoll erhalten, das konsistent sein sollte, überprüfen Sie, ob die Temperatur explizit gesetzt wurde."
+        }
+      },
+      {
+        id: "llm-5",
+        title: "Warum Halluzination auftritt",
+        preview: "Der Kernmechanismus — kein zu behebender Fehler, sondern ein zu berücksichtigendes Merkmal.",
+        content: {
+          explanation: "Halluzination ist kein Fehler im traditionellen Sinne — sie ist eine inhärente Konsequenz der Funktionsweise von LLMs. Das Modell generiert immer das statistisch plausibelste nächste Token. Wenn es nach einem bestimmten Fakt gefragt wird, für den es unzureichendes Trainingssignal hat, generiert es dennoch selbstsicher klingenden Text — weil selbstsichere, flüssige Prosa der Aussehen seiner Trainingsdaten war. Das Modell hat keine interne Prüfung zwischen 'Ich weiß das' und 'Ich erfinde das'. Beide produzieren die gleiche Art von Ausgabe.",
+          analogy: "Stellen Sie sich einen sehr selbstbewussten Mitarbeiter vor, der gelernt hat, dass autoritativ klingende Antworten gut ankommen. Wenn er etwas nicht weiß, generiert er eine plausibel klingende Antwort mit der gleichen Überzeugung, die er für gesichertes Wissen verwenden würde. In seiner Lieferung gibt es kein Signal, das die beiden unterscheidet.",
+          implication: "Entwerfen Sie Protokolle, die Antworten in bereitgestelltem Quellmaterial verankern — übergeben Sie das relevante Dokument direkt in den Prompt. Verlangen Sie zitierte Begründungen statt bloßer Schlussfolgerungen. Für jede Ausgabe, bei der faktische Genauigkeit kritisch ist, verlangen Sie eine Überprüfung an primären Quellen. Halluzination kann nicht eliminiert werden; sie kann durch strukturelles Design drastisch reduziert werden."
+        }
+      },
+      {
+        id: "llm-6",
+        title: "Basis- vs. instruktionsgestimmte Modelle",
+        preview: "Der Unterschied zwischen einem Rohmodell und einem, das auf das Befolgen von Anweisungen trainiert ist.",
+        content: {
+          explanation: "Ein Basismodell wird ausschließlich auf der Vorhersage des nächsten Tokens trainiert — es setzt jeden Text fort, den Sie ihm geben, ohne Anweisungen zu befolgen oder eine hilfreiche Ausrichtung zu haben. Instruktionsgestimmte Modelle werden dann auf dem Basis unter Verwendung von menschlichem Feedback trainiert, um Anweisungen zu befolgen, Fragen hilfreich zu beantworten, schädliche Anfragen abzulehnen und sich wie ein Assistent zu verhalten. Jedes Modell, mit dem Sie als Endnutzer interagieren — Claude, GPT-4o, Gemini — ist instruktionsgestimmt.",
+          analogy: "Ein Basismodell ist ein Absolvent mit umfangreicher Leseerfahrung, aber ohne professionelle Sozialisation — bitten Sie ihn, 'ein Memo zu entwerfen', und er könnte mehr akademischen Text im Stil dessen erzeugen, was er gelesen hat. Ein instruktionsgestimmtes Modell hat ein professionelles Onboarding abgeschlossen: Es versteht, wie es auf Direktiven reagiert, Briefings folgt und Ausgaben in dem Format liefert, das Sie benötigen.",
+          implication: "Diese Unterscheidung erklärt, warum moderne KI auf Befehle reagiert statt nur Text zu vervollständigen. Sie erklärt auch, warum verschiedene Modelle aus demselben Basis sich sehr unterschiedlich verhalten können — das Instruktions-Tuning prägt das operative Verhalten in den meisten alltäglichen Aufgaben mehr als rohe Fähigkeit."
+        }
+      }
+    ]
+  },
+  {
+    id: "prompt",
+    icon: "✍️",
+    label: "Grundlagen des Promptings",
+    color: "#0891b2",
+    light: "#ecfeff",
+    subtopics: [
+      {
+        id: "p-1",
+        title: "Zero-Shot, Few-Shot, Chain-of-Thought",
+        preview: "Drei Prompting-Strategien — wann jede zu verwenden ist und warum sie funktionieren.",
+        content: {
+          explanation: "Zero-Shot-Prompting bittet das Modell, eine Aufgabe ohne Beispiele zu erfüllen — nur die Anweisung. Few-Shot-Prompting bietet repräsentative Beispiele der gewünschten Eingabe und Ausgabe, bevor die Anfrage gestellt wird, und gibt dem Modell ein Muster, dem es folgen soll. Chain-of-Thought-Prompting weist das Modell an, Schritt für Schritt zu denken, bevor es seine endgültige Antwort gibt, und erzwingt sichtbares Zwischendenken, das die Genauigkeit bei komplexen Aufgaben erheblich verbessert.",
+          analogy: "Zero-Shot ist es, einen neuen Teammitglied zu bitten, ein Dokument ohne Briefing zu entwerfen. Few-Shot übergibt ihm zuerst drei Beispieldokumente und sagt 'erstellen Sie etwas Ähnliches'. Chain-of-Thought bittet ihn, Sie durch sein Denken zu führen, bevor er sich auf den endgültigen Entwurf festlegt — der Prozess selbst verbessert die Ausgabe.",
+          implication: "Verwenden Sie Few-Shot, wenn Sie konsistente Struktur, Ton oder Format in Ausgaben benötigen. Schon zwei oder drei Beispiele reduzieren die Variation drastisch. Verwenden Sie Chain-of-Thought für jede Aufgabe, die mehrstufiges Denken, Analyse oder Urteilsbildung beinhaltet — der explizite Denkschritt reduziert Fehler und macht die Logik des Modells überprüfbar."
+        }
+      },
+      {
+        id: "p-2",
+        title: "Warum Spezifität wichtig ist",
+        preview: "Die direkte Beziehung zwischen Eingabestruktur und Ausgabequalität.",
+        content: {
+          explanation: "Das Modell generiert die plausibelste Vervollständigung Ihrer Eingabe. Wenn Ihre Eingabe mehrdeutig ist, löst das Modell diese Mehrdeutigkeit nach eigenem Ermessen auf — nicht unbedingt wie Sie es beabsichtigt haben. Jede Lücke in Ihrem Prompt ist eine Variable, die das Modell mit seinem eigenen Standard füllt. Das bedeutet: Die Qualität der Ausgabe ist direkt proportional zur Präzision der Eingabe. Vage Prompts erzeugen vage Ausgaben; strukturierte Prompts erzeugen strukturierte Ausgaben.",
+          analogy: "Sie würden einen Auftragnehmer nicht mit 'mach etwas Gutes' beauftragen. Sie würden Umfang, Lieferformat, Zielgruppe, Zeitrahmen und Qualitätskriterien angeben. Prompting funktioniert genauso. Das Maß an Klarheit, das Sie in ein schriftliches Briefing für einen menschlichen Mitarbeiter stecken würden, ist die Grundlage für einen Prompt, der zuverlässige Ergebnisse liefert.",
+          implication: "Bevor Sie einen Prompt schreiben, definieren Sie: wie die Ausgabe aussehen soll (Format), für wen sie ist (Zielgruppe und Register), welche Einschränkungen gelten (Länge, Ton, Umfang) und wie eine gute im Vergleich zu einer schlechten Ausgabe aussieht. Diese Komponenten sind kein optionaler Feinschliff — sie sind die funktionale Spezifikation für die Aufgabe."
+        }
+      },
+      {
+        id: "p-3",
+        title: "Rollenformulierung und Persona-Framing",
+        preview: "Was es bewirkt, was nicht, und seine Grenzen in der Produktion.",
+        content: {
+          explanation: "Wenn ein Modell gebeten wird, 'als' eine bestimmte Rolle zu agieren — ein erfahrener Anwalt, ein Finanzanalyst, ein Übersetzer in einfache Sprache — verschiebt es seine Antwortmuster hin zu den Sprachkonventionen und Domain-Standards dieser Rolle. Es gibt dem Modell kein neues Wissen, aber es aktiviert relevante Muster aus seinen Trainingsdaten und passt Register, Ton und Framing entsprechend an. Der Effekt ist real, aber begrenzt: Rollenformulierung beeinflusst Stil, nicht die zugrunde liegende Fähigkeit.",
+          analogy: "Einen Generalisten zu bitten, 'als Vertragsanwalt, der diese Vereinbarung prüft' zu schreiben, macht ihn nicht zum Anwalt. Aber es orientiert ihn hin zu rechtlicher Vorsicht, spezifischen Sprachkonventionen und den Fragen, die ein Anwalt stellen würde. Die Ausgabe wird anders sein — und oft nützlicher — als wenn er ohne jegliches Framing schreiben würde.",
+          implication: "Rollenformulierung ist ein nützliches Werkzeug für Stil, Register und Domain-Orientierung. Es ist kein Ersatz für klare Aufgabenanweisungen und sollte niemals für faktische Genauigkeit in spezialisierten Bereichen eingesetzt werden. Kombinieren Sie Rollenformulierung mit expliziten Aufgabenanweisungen und Ausgabeformat-Spezifikationen für beste Ergebnisse."
+        }
+      },
+      {
+        id: "p-4",
+        title: "System-Prompts vs. Benutzer-Prompts",
+        preview: "Struktureller Unterschied und warum er für das Protokolldesign wichtig ist.",
+        content: {
+          explanation: "System-Prompts sind Anweisungen, die dem Modell vor Beginn des Gesprächs gegeben werden — sie setzen Kontext, Persona, Einschränkungen, Formatpräferenzen und operative Regeln. Benutzer-Prompts sind die einzelnen Anfragen innerhalb eines Gesprächs. In den meisten Implementierungen haben System-Prompts mehr Gewicht und persistieren über das Gespräch hinweg. System-Prompts sind das Fundament des Protokolldesigns; Benutzer-Prompts sind die einzelnen Aufgabenanforderungen, die innerhalb dieser Regeln funktionieren.",
+          analogy: "Ein System-Prompt ist das Betriebshandbuch und die Stellenbeschreibung. Benutzer-Prompts sind die täglichen Arbeitsanforderungen. Das Handbuch regelt, was im Umfang liegt und wie die Arbeit ausgeführt werden soll; einzelne Anforderungen funktionieren innerhalb dieser Parameter. Ohne das Handbuch wird jede Anforderung von Grund auf ohne stabilen Rahmen interpretiert.",
+          implication: "Stabile Regeln, Formatanforderungen, Persona-Einschränkungen und kritischer Kontext gehören in den System-Prompt. Dynamische, aufgabenspezifische Anforderungen gehören in Benutzer-Prompts. Diese Trennung macht KI-Workflows konsistent, überprüfbar und wartbar — und ist das strukturelle Fundament jedes robusten Protokolls."
+        }
+      },
+      {
+        id: "p-5",
+        title: "Iteratives Prompting als Workflow",
+        preview: "Prompting ist kein Einmalschuss. Warum Iteration die Disziplin ist, nicht die Umgehungslösung.",
+        content: {
+          explanation: "Effektives Prompting ist ein Workflow, kein einzelnes Ereignis. Die erste Ausgabe ist diagnostisch — sie zeigt, was das Modell verstanden hat, wo es auf Standardwerte zurückgegriffen hat und was der Prompt nicht spezifiziert hat. Iteration bedeutet, diese Ausgabe als Feedback zu lesen, die spezifische Lücke zu identifizieren und den Prompt oder die Folgeanweisung entsprechend zu überarbeiten. Praktiker, die die erste Ausgabe als zu verfeinernden Entwurf behandeln, übertreffen konstant diejenigen, die jeden Prompt als einmaligen Versuch behandeln.",
+          analogy: "Einen talentierten, aber sehr wörtlichen Auftragnehmer managen: Der erste Entwurf zeigt immer Missverständnisse. Die professionelle Reaktion ist, genau zu notieren, was geändert werden muss, und nicht über die Lücke frustriert zu sein. Überarbeitungsanweisungen schließen die Lücken; Iteration ist die Disziplin, nicht das Versagen.",
+          implication: "Planen Sie Zeit für Iteration in jeden KI-gestützten Workflow ein. Ein Single-Pass-Prompt, der als produktionsreif behandelt wird, ist die häufigste Quelle schlechter Ausgabequalität. Beim Erstellen eines Protokolls ist das Iterationsprotokoll — was Sie geändert haben und warum — die Dokumentation der Protokollentwicklung und ein Vermögenswert an sich."
+        }
+      }
+    ]
+  },
+  {
+    id: "models",
+    icon: "⚡",
+    label: "Modellfamilien",
+    color: "#d97706",
+    light: "#fffbeb",
+    subtopics: [
+      {
+        id: "m-1",
+        title: "Frontier- vs. kleinere Modelle",
+        preview: "Der Kosten-Intelligenz-Kompromiss und wann welches das richtige Werkzeug ist.",
+        content: {
+          explanation: "Frontier-Modelle sind die größten, fähigsten LLMs führender KI-Labore — sie glänzen bei komplexem Denken, der Analyse langer Dokumente, feiner Anweisungsbefolgung und mehrstufigen Aufgaben. Kleinere, schnellere Modelle sind deutlich günstiger und latenzärmer, gut geeignet für hochvolumige, klar definierte Aufgaben wie Klassifizierung, Extraktion, Zusammenfassung kurzer Texte und strukturierte Formatierung. Die Wahl betrifft nicht, welches 'besser' ist — es geht darum, Fähigkeiten mit der Aufgabe abzustimmen.",
+          analogy: "Frontier-Modelle sind Senior-Partner einer Beratungsfirma — teuer, gründlich und leistungsstark für komplexe Probleme. Kleinere Modelle sind fähige Analysten — schneller, günstiger und ausgezeichnet für klar definierte, hochvolumige Arbeit. Jede Aufgabe unabhängig von der Komplexität an den Senior-Partner zu leiten, ist verschwenderisch und unnötig.",
+          implication: "Im Protokolldesign ist die Modellauswahl eine explizite Entscheidung, kein Standard. Definieren Sie, welche Fähigkeit die Aufgabe tatsächlich erfordert, und wählen Sie dann das kosteneffektivste Modell, das diese Schwelle erfüllt. Routineaufgaben zu kleineren Modellen zu leiten und Frontier-Fähigkeiten für wirklich komplexe Arbeit zu reservieren, ist die Standard-Kostenoptimierungspraxis in Produktionssystemen."
+        }
+      },
+      {
+        id: "m-2",
+        title: "Claude: Haiku, Sonnet, Opus",
+        preview: "Geschwindigkeit, Kosten und Denktiefe — das operative Entscheidungsrahmen.",
+        content: {
+          explanation: "Anthropics Claude-Familie arbeitet auf einem Dreistufenmodell. Haiku ist das schnellste und kostengünstigste (1 $ Eingabe / 5 $ Ausgabe pro Million Tokens) — konzipiert für hochvolumige, weniger komplexe Aufgaben. Sonnet ist das ausgewogene Arbeitstier (3 $ / 15 $) — fähig, die Mehrheit professioneller Workflows zu einem vernünftigen Preis zu bewältigen. Opus ist die fähigste Stufe (5 $ / 25 $) — am besten für komplexes Denken, Analyse langer Dokumente und hochwertige Ausgaben reserviert, wo Tiefe die Prämie rechtfertigt. Alle Stufen unterstützen lange Kontextfenster und multimodale Eingabe. Preise Stand Anfang 2026.",
+          analogy: "Haiku ist ein scharfer Junioranalyst — schnell und effizient für definierte Aufgaben. Sonnet ist Ihr Senior-Manager — zuverlässig, fähig, für die meisten Arbeiten geeignet. Opus ist der Expertenpartner, den Sie für die wirklich schwierigen Probleme hinzuziehen — die Kosten sind gerechtfertigt, wenn der Einsatz oder die Komplexität es erfordern.",
+          implication: "Verwenden Sie standardmäßig Sonnet für die meisten Protokolle in der Designphase. Verwenden Sie Haiku für Produktions-Workflows, bei denen das Volumen hoch und die Aufgabe klar definiert und gut getestet ist. Reservieren Sie Opus für komplexe analytische Aufgaben, mehrstufiges Denken oder jede Situation, bei der die Ausgabequalität eine folgenreiche Entscheidung wesentlich beeinflusst."
+        }
+      },
+      {
+        id: "m-3",
+        title: "Denkmodelle vs. Standardmodelle",
+        preview: "Was die o-Serie und ähnliche Modelle tatsächlich anders machen.",
+        content: {
+          explanation: "Denkmodelle — wie OpenAIs o3 und o4-mini oder Claude mit erweitertem Denken — sind darauf trainiert, eine interne Gedankenkette zu generieren, bevor sie eine endgültige Antwort geben. Dieser 'Erst denken'-Ansatz verbraucht zusätzliche Rechenleistung, verbessert aber die Genauigkeit bei mehrstufigen Problemen, komplexen Analysen und Aufgaben, bei denen die Antwort das Durcharbeiten von Zwischenschritten erfordert, erheblich. Das Denken ist manchmal für den Benutzer sichtbar, manchmal intern. Standardmodelle reagieren ohne diese bewusste Denkphase.",
+          analogy: "Ein Standardmodell antwortet wie ein scharfer Kollege, der schnell denkt und sofort antwortet. Ein Denkmodell ist derselbe Kollege, der sagt 'gib mir dreißig Sekunden' — er pausiert, arbeitet das Problem durch und spricht dann. Die Pause kostet Zeit; die Ausgabequalität bei schwierigen Problemen ist bedeutend besser.",
+          implication: "Verwenden Sie Denkmodelle, wenn eine Aufgabe echte Komplexität beinhaltet — Mehrfachvariablen-Analyse, nuanciertes Urteil, komplexe Planung oder jedes Problem, bei dem die Erstantwort häufig überarbeitet werden muss. Für Routineaufgaben mit klaren Eingaben und Ausgaben sind die zusätzlichen Kosten und die Latenz des Denkmodus nicht gerechtfertigt."
+        }
+      },
+      {
+        id: "m-4",
+        title: "Multimodale Fähigkeiten",
+        preview: "Was Bild-, Dokument- und Audioeingaben tatsächlich ermöglichen.",
+        content: {
+          explanation: "Multimodale Modelle können Eingaben über Text hinaus verarbeiten — Bilder, PDFs, Screenshots, Diagramme und in einigen Implementierungen Audio. Dies ermöglicht Aufgaben, die zuvor nur Text-Workflows waren: Ein Diagramm in einem Bericht analysieren, strukturierte Daten aus einem gescannten Dokument extrahieren, einen Screenshot beschreiben, ein PDF ohne Vorverarbeitung lesen, oder eine Präsentationsfolie überprüfen. Alle aktuellen Claude-Modelle unterstützen Bild- und Dokumenteingabe.",
+          analogy: "Ein rein textbasiertes Modell kann das schriftliche Memo lesen. Ein multimodales Modell kann das Memo lesen und das daran angehängte Diagramm ansehen — und verstehen, wie sie sich aufeinander beziehen. Für dokumentenintensive Workflows ist der praktische Unterschied erheblich.",
+          implication: "Jeder Workflow, der derzeit das manuelle Kopieren von Text aus PDFs, Screenshots oder Bildern beinhaltet, kann durch direktes Übergeben des Dokuments vereinfacht werden. Multimodale Fähigkeiten sind besonders wertvoll für die Dokumentenverarbeitung und jeden Workflow, bei dem Informationen in visuellen oder gemischten Formaten ankommen."
+        }
+      }
+    ]
+  },
+  {
+    id: "agents",
+    icon: "🔗",
+    label: "Agenten & Orchestrierung",
+    color: "#059669",
+    light: "#ecfdf5",
+    subtopics: [
+      {
+        id: "a-1",
+        title: "Was ein KI-Agent ist",
+        preview: "Der Unterschied zwischen einem einzelnen Modellaufruf und einer agentischen Schleife.",
+        content: {
+          explanation: "Ein einzelner Modellaufruf ist eine Anfrage-Antwort-Interaktion: Sie senden einen Prompt, das Modell gibt eine Ausgabe zurück. Ein KI-Agent ist ein System, in dem das Modell in einer Schleife arbeitet — Kontext wahrnehmen, entscheiden, was zu tun ist, handeln (oft mit Werkzeugen), das Ergebnis beobachten und dann wiederholen — bis die Aufgabe abgeschlossen ist. Das Modell beantwortet nicht nur; es trifft sequentielle Entscheidungen und ergreift Maßnahmen. Agenten können das Web durchsuchen, Code ausführen, Datenbanken abfragen, Dateien schreiben und APIs aufrufen, je nach verfügbaren Werkzeugen.",
+          analogy: "Ein einzelner Modellaufruf ist wie jemandem eine Frage zu stellen und eine Antwort zu erhalten. Ein Agent ist wie jemandem eine Aufgabe zuzuweisen und ihm die Autorität zu geben, alle notwendigen Schritte zu unternehmen — Quellen prüfen, entwerfen, überarbeiten, verifizieren — bis die Arbeit abgeschlossen ist. Der Unterschied ist zwischen einem Berater, der Ihre Frage beantwortet, und einem, der das Projekt verwaltet.",
+          implication: "Agenten ermöglichen die Automatisierung mehrstufiger Workflows, die zuvor bei jedem Schritt konstante menschliche Intervention erforderten. Sie führen auch neue Fehlermodi ein — eine falsche Entscheidung in Schritt zwei kann sich ohne menschliche Überprüfung durch nachfolgende Schritte fortpflanzen. Das Protokolldesign für Agenten erfordert explizites Nachdenken über Fehlerbehandlung, Entscheidungsgrenzen und wann menschliche Überprüfung erzwungen werden muss."
+        }
+      },
+      {
+        id: "a-2",
+        title: "Tool-Nutzung und Funktionsaufruf",
+        preview: "Was es in der Praxis bedeutet, dass ein Modell externe Werkzeuge verwendet.",
+        content: {
+          explanation: "Tool-Nutzung — auch Funktionsaufruf genannt — gibt einem Modell Zugang zu vordefinierten externen Fähigkeiten: das Web durchsuchen, Code ausführen, eine Datenbank abfragen, eine Datei lesen, eine Nachricht senden, eine API aufrufen. Das Modell entscheidet, wann es ein Werkzeug verwendet, welche Parameter es übergibt und wie es das Ergebnis in seine Antwort einbezieht. Die Werkzeuge selbst werden vom Systementwickler definiert und kontrolliert, nicht vom Modell.",
+          analogy: "Tool-Nutzung verwandelt ein Modell von jemandem, der nur spricht, in jemanden, der auch Dinge tun kann. Einem Modell ein Suchwerkzeug zu geben, ist wie einem Forscher Internetzugang zu geben. Ihm ein Code-Ausführungswerkzeug zu geben, ist wie einem Analysten einen Taschenrechner zu geben. Das Modell entscheidet, wann und wie diese Werkzeuge verwendet werden — aber die Werkzeuge selbst sind das, was Sie genehmigt und verfügbar gemacht haben.",
+          implication: "Zu verstehen, auf welche Werkzeuge ein Modell Zugang hat, ist wesentlich für das Design sicherer und effektiver agentischer Workflows. Jedes Werkzeug repräsentiert eine Fähigkeit und einen potenziellen Fehlermodus. Das Werkzeugdesign — welche Aktionen zuzulassen sind, welche Parameter freizugeben sind, welche Absicherungen einzubauen sind — ist der Ort, an dem die Sicherheit von KI-Workflows primär verwaltet wird."
+        }
+      },
+      {
+        id: "a-3",
+        title: "RAG — Retrieval-Augmented Generation",
+        preview: "Das Kernkonzept und warum es Geschäftsanwendungen transformiert.",
+        content: {
+          explanation: "RAG verbindet das Modell zur Abfragezeit mit einer externen Wissensbasis. Wenn eine Anfrage eingeht, werden relevante Dokumente aus einer Datenbank abgerufen (mittels semantischer Suche) und neben der Frage in den Kontext des Modells übergeben. Das Modell generiert dann eine Antwort, die in diesen spezifischen Dokumenten verankert ist — anstatt sich auf seine Trainingsdaten zu stützen. Dies adressiert gleichzeitig zwei grundlegende Einschränkungen: Wissens-Abschneidezeitpunkte und Halluzination bei domänenspezifischen Fakten.",
+          analogy: "RAG ist wie einem Mitarbeiter ein gut organisiertes Ablagesystem zu geben und ihm anzuweisen, relevante Dokumente nachzuschlagen, bevor er Fragen zu Unternehmensrichtlinien oder Kundenhistorie beantwortet. Anstatt sich auf das Gedächtnis zu verlassen, überprüft er immer die Quelle. Die Qualität der Antwort hängt von der Qualität des Ablagesystems ab — aber die Antworten sind in den tatsächlichen Dokumenten verankert.",
+          implication: "RAG ist die Standardarchitektur für jede KI-Geschäftsanwendung, die Genauigkeit bei internen oder domänenspezifischen Informationen erfordert. Wenn Sie Protokolle für wissensintensive Workflows erstellen — HR, Compliance, Kundenverwaltung, interne Dokumentation — ist RAG die Architekturschicht, die es zuverlässig macht. Sie müssen es nicht selbst erstellen, um zu verstehen, warum es für die Systeme wichtig ist, die Sie darum herum entwerfen."
+        }
+      },
+      {
+        id: "a-4",
+        title: "Speichertypen",
+        preview: "Im Kontext, extern, prozedural — eine grundlegende Taxonomie.",
+        content: {
+          explanation: "KI-Systeme haben drei Kategorien von Speicher. Im-Kontext-Speicher ist das aktuelle Gesprächsfenster — vorübergehend, sichtbar und verloren, wenn die Sitzung endet. Externer Speicher ist eine persistente Datenbank, die bei Bedarf abgerufen werden kann — Dokumente, vergangene Interaktionen, strukturierte Daten. Prozeduraler Speicher ist Verhalten, das in den Gewichtungen des Modells durch Training kodiert ist — er kann ohne erneutes Training nicht aktualisiert werden. Die meisten aktuellen Anwendungen kombinieren Im-Kontext- und externen Speicher; prozeduraler Speicher ist das, was das Modell 'standardmäßig weiß'.",
+          analogy: "Im-Kontext-Speicher ist, was Sie während eines Meetings im Kopf halten. Externer Speicher ist Ihr Aktenschrank und Ihre Notizen — abrufbar, persistent, durchsuchbar. Prozeduraler Speicher ist das Fachwissen, das Sie über Jahre aufgebaut haben — so tief verankert, dass es nicht bewusst abgerufen, sondern einfach ausgedrückt wird. Das Meeting endet und was in Ihrem Kopf war, ist weg; der Aktenschrank bleibt; Ihr Fachwissen bleibt.",
+          implication: "Beim Entwerfen von KI-Workflows entscheiden Sie explizit, wo Informationen gespeichert werden sollen. Stabile Referenzinhalte gehören in externen Speicher (eine Wissensbasis). Aufgabenspezifischer Kontext gehört in den Kontext. Modellstandards können manchmal durch Fine-Tuning beeinflusst werden, das den prozeduralen Speicher verändert. Die meisten Protokolle arbeiten primär mit Im-Kontext- und externem Speicher."
+        }
+      },
+      {
+        id: "a-5",
+        title: "MCP — Model Context Protocol",
+        preview: "Was es ist und warum es zum Standard für die Tool-Integration wird.",
+        content: {
+          explanation: "Das Model Context Protocol (MCP) ist ein offener Standard, der im November 2024 von Anthropic eingeführt und mittlerweile von OpenAI, Google und Microsoft übernommen wurde. Es standardisiert, wie KI-Modelle sich mit externen Tools und Datenquellen verbinden. Vor MCP erforderte jede Integration benutzerdefinierten Code — einen Connector für jedes Tool und jedes Modell. MCP definiert ein gemeinsames Protokoll, sodass jedes MCP-kompatible Tool sich mit jedem MCP-kompatiblen Modell verbinden kann. Bis Anfang 2026 existieren Tausende von MCP-Servern. Die Verwaltung wurde im Dezember 2025 an die Linux Foundation übertragen.",
+          analogy: "MCP ist der USB-Standard für KI. Vor USB benötigte jedes Peripheriegerät seinen eigenen proprietären Connector — kostspielig, fragil und inkompatibel zwischen Geräten. USB schuf eine universelle Schnittstelle, sodass jedes Gerät an jeden Computer angeschlossen werden kann. MCP macht dasselbe für die KI-Tool-Integration.",
+          implication: "MCP wird schnell zu Infrastruktur. Sie müssen keine MCP-Server erstellen, um zu verstehen, warum es wichtig ist. Zu wissen, was MCP ist, ermöglicht es Ihnen, präzise mit technischen Mitarbeitern über Integrationskosten und -optionen zu sprechen und zu beurteilen, ob eine vorgeschlagene KI-Implementierung auf Standardinfrastruktur aufbaut oder auf einem fragilen, teuer zu wartenden Connector."
+        }
+      }
+    ]
+  },
+  {
+    id: "limits",
+    icon: "⚠️",
+    label: "Grenzen & Fehler",
+    color: "#dc2626",
+    light: "#fef2f2",
+    subtopics: [
+      {
+        id: "l-1",
+        title: "Halluzination: Typen und Ursachen",
+        preview: "Entwerfen Sie Prompts, die sie reduzieren — nicht nur erkennen.",
+        content: {
+          explanation: "Halluzination umfasst mehrere verschiedene Fehlertypen: Sachmängel (falsche Daten, Namen, Statistiken), erfundene Zitate (echtklingende, aber nicht existierende Quellen), logische Inkonsistenzen innerhalb einer Antwort und selbstsichere Ausarbeitung über das hinaus, was das Quellmaterial stützt. Alle stammen aus derselben Ursache: Das Modell generiert den statistisch plausibelsten Text, unabhängig davon, ob es ein zuverlässiges Trainingssignal für die spezifische Behauptung hat. Es gibt keinen internen Mechanismus, der 'Ich weiß das' von 'Das klingt richtig' unterscheidet.",
+          analogy: "Ein hochkonfidenter Kollege, der gelernt hat, dass autoritativ klingende Antworten gut ankommen. Er produziert flüssige, selbstsichere Antworten, egal ob er wirkliches Wissen dahinter hat. In seiner Lieferung gibt es nichts, das den Unterschied signalisiert. Die einzige Möglichkeit zu wissen ist, die zugrunde liegenden Fakten zu überprüfen.",
+          implication: "Drei praktische Designantworten: (1) Antworten in bereitgestelltem Quellmaterial verankern — das Dokument übergeben und das Modell anweisen, daraus zu antworten. (2) Zitate verlangen — ein Modell, das eine bestimmte Quelle zitieren muss, ist einfacher zu überprüfen als eines, das nackte Schlussfolgerungen gibt. (3) Jede spezifische Behauptung (Statistiken, Namen, Daten, Zitate) als unabhängige Überprüfung bedürftig behandeln, bevor sie in einer folgenreichen Ausgabe erscheint."
+        }
+      },
+      {
+        id: "l-2",
+        title: "Kontextverschiebung in langen Gesprächen",
+        preview: "Warum frühere Anweisungen nachlassen und wie man kompensiert.",
+        content: {
+          explanation: "Wenn ein Gespräch länger wird, verteilt die Aufmerksamkeit des Modells sich über ein zunehmend großes Fenster. Frühere Anweisungen, Einschränkungen und Kontext verschwinden nicht — aber sie erhalten weniger effektives Gewicht relativ zu aktuellem Inhalt. In einem sehr langen Gespräch kann das Modell subtil von am Anfang festgelegten Einschränkungen abdriften: Formatanforderungen lockern, spezifische Regeln vergessen oder den Ton verschieben. Dies ist nicht das Modell, das Anweisungen ignoriert — es ist die mathematische Konsequenz der Aufmerksamkeitsverdünnung über einen langen Kontext.",
+          analogy: "Wie ein langes Projektmeeting, bei dem das ursprüngliche Briefing zunehmend von der Diskussion überlagert wird. Die endgültigen Entscheidungen ähneln möglicherweise kaum dem, was zu Beginn festgelegt wurde — nicht weil jemand das Briefing absichtlich aufgegeben hat, sondern weil es in Bedeutung relativ zu dem, was zuletzt gesagt wurde, verblasst ist.",
+          implication: "Für lange Workflows wiederholen Sie die wichtigsten Einschränkungen regelmäßig im Gespräch. Platzieren Sie kritische, stabile Regeln in System-Prompts — System-Prompts haben strukturelle Persistenz. Für sehr lange Aufgaben sollten Sie in Betracht ziehen, sie in kürzere, fokussierte Austausche aufzuteilen, die den Kontext zurücksetzen, anstatt ihn unbegrenzt anzusammeln."
+        }
+      },
+      {
+        id: "l-3",
+        title: "Sychophantie",
+        preview: "Warum Modelle dazu neigen, zuzustimmen, und wie man es im Protokolldesign entgegenwirkt.",
+        content: {
+          explanation: "Modelle neigen dazu, Benutzern zuzustimmen, ihre Annahmen zu bestätigen und Konfrontationen zu vermeiden. Dies ist keine bewusste Designentscheidung — es ist eine Folge des Trainings auf menschlichem Feedback, bei dem Zustimmung oft positiver bewertet wurde als Widerspruch. Das praktische Ergebnis: Wenn Sie eine korrekte Antwort des Modells in Frage stellen, wird es häufig seine Position an Ihre Präferenz anpassen, auch wenn Sie falsch liegen. Selbstsichere Benutzerannahmen werden als implizite Korrekturen behandelt.",
+          analogy: "Ein übermäßig eifriger Assistent, der gelernt hat, dass 'Ja' weniger Reibung erzeugt als 'Nein'. Er sagt bei allem 'tolle Idee!' — nicht aus Unehrlichkeit, sondern weil Zustimmung immer belohnt wurde. Die Gefahr liegt nicht darin, dass er Sie täuscht; es ist, dass er Ihre Fehler bestätigt, anstatt sie zu erkennen.",
+          implication: "Behandeln Sie die Zustimmung eines Modells niemals als Bestätigung Ihrer Argumentation. Bitten Sie es explizit, Gegenargumente zu stärken, Schwächen in Ihrer Analyse zu identifizieren, den Advocatus Diaboli zu spielen. Entwerfen Sie Protokolle, die Kritik als separaten, expliziten Schritt verlangen. Für wichtige Entscheidungen verwenden Sie einen separaten Prompt, der speziell dazu designed wurde, die erste Ausgabe in Frage zu stellen."
+        }
+      },
+      {
+        id: "l-4",
+        title: "Wissens-Abschneidezeitpunkte",
+        preview: "Operative Implikationen für zeitkritische Workflows.",
+        content: {
+          explanation: "Jedes Modell wird auf Daten bis zu einem bestimmten Datum trainiert — seinem Wissens-Abschneidezeitpunkt. Ereignisse, Veröffentlichungen, Preisänderungen, regulatorische Aktualisierungen und neue Informationen nach diesem Datum fehlen einfach in den Gewichtungen des Modells. Das Modell kann nicht ableiten, was sich geändert hat; es operiert mit der Welt, wie sie zur Trainingszeit war. Für Claude Sonnet 4.6 ist der Wissens-Abschneidezeitpunkt Mai 2025. Dies ist eine strukturelle Einschränkung, kein zu umgehender Fehlermodus.",
+          analogy: "Arbeiten mit einem brillanten Kollegen, der sich seit dem Trainingsabschneidezeitpunkt auf einer abgelegenen Forschungsexpedition befunden hat. Alles, was er von vorher weiß, ist gut integriert und zuverlässig. Alles, was sich seit seiner Abreise geändert hat — das weiß er einfach nicht, und er merkt möglicherweise nicht, dass er es nicht weiß.",
+          implication: "Für jeden Workflow, der aktuelle Ereignisse, jüngste regulatorische Änderungen, aktuelle Preise, Marktdaten oder schnell sich ändernde technische Informationen beinhaltet — verlassen Sie sich nicht auf das Trainingswissen des Modells. Stellen Sie aktuelle Informationen explizit im Prompt bereit, verwenden Sie ein Modell mit Web-Such-Tool-Zugang oder implementieren Sie ein RAG-System. Überprüfen Sie immer zeitkritische Behauptungen."
+        }
+      },
+      {
+        id: "l-5",
+        title: "Überabhängigkeitsmuster",
+        preview: "Wenn KI-Unterstützung Fragilität statt Resilienz erzeugt.",
+        content: {
+          explanation: "Überabhängigkeit tritt auf, wenn KI-Unterstützung zum Standard wird statt zu einem Werkzeug — wenn kritisches Denken verkümmert, weil die KI immer da ist, um es zu kompensieren. Teams, die Entscheidungen durch KI leiten, ohne das menschliche Urteil zu erhalten, schaffen Fragilität: Das System funktioniert, bis die KI falsch liegt und niemand es bemerkt. Das Risiko liegt nicht darin, dass die KI versagt — sondern darin, dass der Fehler unentdeckt bleibt, weil die Menschen aufgehört haben, unabhängig zu verifizieren.",
+          analogy: "GPS-Navigation ist praktisch, bis es Sie in einen Fluss leitet — und Sie folgen ihm, weil Sie aufgehört haben, Ihrer eigenen räumlichen Denkfähigkeit zu vertrauen. Das Werkzeug hat die Fähigkeit nach und nach ersetzt, und die Fähigkeit ist still verkümmert. Der Fehlermodus ist nicht das falsche GPS; es ist der Fahrer, der die unabhängige Fähigkeit verloren hat, dies zu erkennen.",
+          implication: "Protokolle sollten explizit angeben, wann menschliche Überprüfung obligatorisch ist — nicht optional. KI-generierte Ausgaben, die folgenreiche Entscheidungen beeinflussen, sollten eine dokumentierte menschliche Abzeichnung erfordern. Beim Erstellen von KI-Workflows für Teams überprüfen Sie regelmäßig, ob die Menschen in der Schleife die Ausgaben wirklich überprüfen oder sie lediglich als Formalität genehmigen."
+        }
+      }
+    ]
+  },
+  {
+    id: "protocols",
+    icon: "🛠️",
+    label: "Protokoll-Engineering",
+    color: "#7c3aed",
+    light: "#f5f3ff",
+    subtopics: [
+      {
+        id: "pr-1",
+        title: "Prompt vs. Protokoll",
+        preview: "Ein Prompt ist eine Eingabe. Ein Protokoll ist ein wiederverwendbares System. Der Unterschied ist alles.",
+        content: {
+          explanation: "Ein Prompt ist eine einzelne Eingabe an ein Modell — er funktioniert einmal, für eine Person, in einem Kontext. Ein Protokoll ist ein dokumentiertes, versioniertes, wiederholbares System, das um einen Prompt herum aufgebaut ist: Es enthält eine Zweckbeschreibung, den vollständigen Prompt-Text, kontextgebende Anweisungen, Beispiele für gute und schlechte Ausgaben, Regeln zur Fehlerbehandlung und ein Änderungsprotokoll. Ein Protokoll ist darauf ausgelegt, über Verwendungen, Benutzer und Variationen in der Eingabe hinweg konsistente Ergebnisse zu liefern — ohne dass der Autor anwesend sein muss.",
+          analogy: "Ein Prompt ist eine mündliche Anweisung an einen Kollegen. Ein Protokoll ist ein Verfahren in einem Prozesshandbuch — geschrieben, um zuverlässig zu funktionieren, auch wenn die Person, die es geschrieben hat, nicht im Raum ist, auch wenn es von jemandem ausgeführt wird, der die Aufgabe noch nie gesehen hat. Das Handbuch kodiert das Wissen, sodass es nicht mehr in einem Kopf gesperrt ist.",
+          implication: "Der Wandel vom Prompting zum Protokolldesign ist der Wandel von persönlicher Produktivität zu operativer Infrastruktur. Wenn die Ausgabequalität eines KI-Workflows davon abhängt, wer ihn ausführt oder wie er an einem bestimmten Tag formuliert, ist es ein promptbasiertes System. Wenn es unabhängig davon konsistent funktioniert, ist es ein Protokoll. Diese Unterscheidung ist die grundlegende Fähigkeit der Skill-Engineer-Rolle."
+        }
+      },
+      {
+        id: "pr-2",
+        title: "Was ein Protokoll robust macht",
+        preview: "Spezifität, Beispiele, Fehlerbehandlung, Versionsnotizen.",
+        content: {
+          explanation: "Ein robustes Protokoll enthält sechs Elemente: (1) eine klare Zweckbeschreibung — wofür das Protokoll ist und wann es zu verwenden ist; (2) vollständigen System-Prompt-Text; (3) explizite Ausgabeformat-Spezifikation; (4) Beispiele für gute Ausgaben und mindestens ein Beispiel für eine inakzeptable Ausgabe; (5) Fehlerbehandlungsanweisungen — was zu tun ist, wenn das Modell Randfall-Ausgaben produziert; (6) Versionsnotizen — was geändert wurde und warum. Robustheit bedeutet, dass das Protokoll konsistent funktioniert, auch bei Variation in Eingaben, für die es nicht speziell entworfen wurde.",
+          analogy: "Ein gut gestalteter Prozess funktioniert, auch wenn ihn ein neuer Mitarbeiter zum ersten Mal ausführt, ohne Hilfe anfordern zu müssen. Die Dokumentation macht das Wissen übertragbar. Das Maß an Robustheit ist nicht 'funktioniert es, wenn ich es ausführe' — es ist 'funktioniert es, wenn jemand anderes es auf einer Eingabe ausführt, die ich nicht vorhergesehen hatte'.",
+          implication: "Testen Sie jedes Protokoll mit Eingaben, für die es nicht entworfen wurde. Randfälle offenbaren Zerbrechlichkeit. Die Fehlermodi, die Sie beim Testen entdecken, sind die wertvollsten Informationen, die der Protokollentwicklungsprozess produziert — dokumentieren Sie sie und fügen Sie Behandlung für sie hinzu. Ein Protokoll ist nur so robust wie der schwerste Testfall, den es überlebt hat."
+        }
+      },
+      {
+        id: "pr-3",
+        title: "Prompts evaluieren und testen",
+        preview: "Wie man weiß, ob ein Protokoll tatsächlich funktioniert.",
+        content: {
+          explanation: "Die Prompt-Evaluierung beinhaltet das Ausführen eines Protokolls gegen einen definierten Satz von Testfällen — repräsentative Eingaben — und das Bewerten der Ausgaben gegen explizite Kriterien. Ohne Evaluierung können Sie nicht wissen, ob ein Protokoll zuverlässig funktioniert, im Laufe der Zeit nachlässt oder subtil falsche Ausgaben produziert, die unbemerkt bleiben. Evaluierung ist auch notwendig, wenn Sie eine Modellversion ändern, einen Prompt aktualisieren oder den Kontext ändern — derselbe Prompt kann sich auf einem neuen Modell anders verhalten.",
+          analogy: "Qualitätskontrolle in einem Produktionsprozess. Sie lassen die Produktionslinie nicht einfach laufen und hoffen. Sie nehmen Ausgaben, messen sie gegen eine Spezifikation und verfolgen Ausfälle bis zu ihrer Ursache zurück. Die Spezifikation muss geschrieben werden, bevor Sie dagegen messen können — was bedeutet, zu definieren, wie 'korrekt' aussieht, bevor Sie testen.",
+          implication: "Beim Erstellen eines Protokolls erstellen Sie gleichzeitig einen kleinen Testsatz: 5–10 repräsentative Eingaben, die den Bereich der Fälle abdecken, einschließlich ein oder zwei Randfälle. Definieren Sie, wie eine gute Ausgabe für jeden aussieht. Führen Sie diesen Testsatz vor der Bereitstellung und immer dann aus, wenn Sie das Protokoll oder das Modell ändern. Dies ist Ihre Grundlage zur Erkennung von Regression."
+        }
+      },
+      {
+        id: "pr-4",
+        title: "Prompt-Bibliotheken und Wissensmanagement",
+        preview: "Wie Teams KI-Fähigkeiten im Maßstab operationalisieren.",
+        content: {
+          explanation: "Eine Prompt-Bibliothek ist eine organisierte, versionierte Sammlung getesteter Protokolle — nach Anwendungsfall durchsuchbar, mit Dokumentation von Zweck, Leistungsnotizen, Eigentümerschaft und Änderungshistorie. Sie transformiert KI-Fähigkeiten von informellem individuellem Wissen in ein gemeinsames Team-Asset. Teams mit gut gepflegten Prompt-Bibliotheken können neue Mitglieder schnell in KI-gestützte Workflows einarbeiten, Qualitätsstandards aufrechterhalten und Protokolle systematisch verbessern.",
+          analogy: "Ein Standard-Verfahrenshandbuch oder ein Code-Repository. Das kollektive Wissen ist aufgeschrieben, für das gesamte Team zugänglich, versionskontrolliert und verbesserbar. Vergleichen Sie dies mit einer Situation, in der jede Person ihre eigenen ad-hoc-Prompts informell gespeichert hat — die Fähigkeit des Teams ist nur so stark wie das Individuum, und sie verschwindet, wenn es geht.",
+          implication: "Selbst als einzelner Praktiker ist das Pflegen einer persönlichen Protokollbibliothek mit Versionsnotizen die grundlegende Praxis professioneller KI-Operationen. Es ist auch das primäre Portfolio-Artefakt für einen Skill Engineer — eine gut dokumentierte Bibliothek funktionierender, getesteter Protokolle demonstriert Fähigkeit glaubwürdiger als jede Zertifizierung."
+        }
+      },
+      {
+        id: "pr-5",
+        title: "Die Skill-Engineer-Rollenlandschaft",
+        preview: "Wo diese Praxis im entstehenden Berufsfeld steht.",
+        content: {
+          explanation: "Die Skill-Engineer-Rolle steht zwischen 'KI-Benutzer' und 'KI-Entwickler'. Sie beinhaltet das Entwerfen, Testen, Dokumentieren und Pflegen der Prompt-Systeme, auf die Organisationen sich stützen — ohne Software-Engineering- oder ML-Expertise zu erfordern. Die Rolle entsteht als eigenständige Funktion in KI-fortschrittlichen Organisationen, weil die Personen, die am besten positioniert sind, effektive KI-Protokolle zu entwerfen, nicht immer Entwickler sind — sie sind operative Generalisten mit tiefem Prozesswissen, starken Kommunikationsfähigkeiten und der Disziplin zu dokumentieren und zu iterieren.",
+          analogy: "Der Business-Analyst, der die Lücke zwischen Geschäftsanforderungen und technischer Implementierung überbrückt. Kein Entwickler, aber unentbehrlich für die Übersetzung dessen, was das Unternehmen tatsächlich braucht, in Systemspezifikationen, die technische Teams erstellen können. Der Skill Engineer nimmt eine ähnliche Brückenposition ein — zwischen operativen Workflows und den KI-Systemen, die sie unterstützen.",
+          implication: "Die Fähigkeiten, die diese Rolle definieren — strukturiertes Denken, Prozessdesign, Fehlermodus-Bewusstsein, Dokumentationsdisziplin und kritische Bewertung von Ausgaben — sind Neuformulierungen operativer Generalistenstärken, keine völlig neuen Fähigkeiten. Der Unterschied besteht darin, diese Fähigkeiten systematisch auf die KI-Protokollentwicklung anzuwenden, mit genügend konzeptuellem Verständnis, um zu verstehen, warum Modelle sich so verhalten wie sie es tun."
+        }
+      }
+    ]
+  }
+];
+
+// ─── UI STRINGS ─────────────────────────────────────────────────────────────
+
+const ui = {
+  en: {
+    siteLabel: "Skill Engineer · Layer 1 Study Block",
+    title: "AI Conceptual Fluency",
+    subtitle: (total) => `6 topic areas · ${total} concepts · 2–4 week programme`,
+    progressLabel: (done, total) => `${done} of ${total} complete`,
+    allTopics: "← All topics",
+    concepts: "concepts",
+    suggestedSequence: "Suggested sequence",
+    inProgress: "in progress",
+    done: "✓ done",
+    conceptsComplete: (done, total) => `${done} of ${total} concepts complete`,
+    mentalModel: "Mental model",
+    operationalImplication: "Operational implication",
+    markComplete: "Mark complete",
+    markIncomplete: "Mark incomplete",
+  },
+  de: {
+    siteLabel: "Skill Engineer · Lernblock Ebene 1",
+    title: "KI-Konzeptverständnis",
+    subtitle: (total) => `6 Themenbereiche · ${total} Konzepte · 2–4 Wochen Programm`,
+    progressLabel: (done, total) => `${done} von ${total} abgeschlossen`,
+    allTopics: "← Alle Themen",
+    concepts: "Konzepte",
+    suggestedSequence: "Empfohlene Reihenfolge",
+    inProgress: "in Bearbeitung",
+    done: "✓ fertig",
+    conceptsComplete: (done, total) => `${done} von ${total} Konzepten abgeschlossen`,
+    mentalModel: "Mentales Modell",
+    operationalImplication: "Praktische Auswirkung",
+    markComplete: "Als abgeschlossen markieren",
+    markIncomplete: "Als unvollständig markieren",
+  }
+};
+
+// ─── APP ─────────────────────────────────────────────────────────────────────
+
+const allSubtopicsEN = topicsEN.flatMap(t => t.subtopics.map(s => ({ ...s, topicId: t.id })));
 
 export default function StudyHub() {
+  const [lang, setLang] = useState(() => {
+    try { return localStorage.getItem("sf_lang") || "en"; } catch { return "en"; }
+  });
   const [completed, setCompleted] = useState(() => {
     try { return JSON.parse(localStorage.getItem("sf_completed") || "{}"); } catch { return {}; }
   });
   const [activeTopicId, setActiveTopicId] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
+
+  const topics = lang === "de" ? topicsDE : topicsEN;
+  const t = ui[lang];
+
+  const switchLang = (newLang) => {
+    setLang(newLang);
+    setActiveTopicId(null);
+    setExpandedId(null);
+    try { localStorage.setItem("sf_lang", newLang); } catch {}
+  };
 
   const toggleComplete = (id) => {
     const next = { ...completed, [id]: !completed[id] };
@@ -372,11 +785,11 @@ export default function StudyHub() {
     try { localStorage.setItem("sf_completed", JSON.stringify(next)); } catch {}
   };
 
+  const totalAll = allSubtopicsEN.length;
   const totalDone = Object.values(completed).filter(Boolean).length;
-  const totalAll = allSubtopics.length;
   const pct = Math.round((totalDone / totalAll) * 100);
 
-  const activeTopic = topics.find(t => t.id === activeTopicId);
+  const activeTopic = topics.find(tp => tp.id === activeTopicId);
 
   return (
     <div style={{ fontFamily: "'Georgia', serif", background: "#f8f7f4", minHeight: "100vh", color: "#1a1a1a" }}>
@@ -386,20 +799,42 @@ export default function StudyHub() {
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
             <div>
               <div style={{ fontFamily: "Arial, sans-serif", fontSize: 11, letterSpacing: "0.15em", color: "#6366f1", fontWeight: 700, marginBottom: 8, textTransform: "uppercase" }}>
-                Skill Engineer · Layer 1 Study Block
+                {t.siteLabel}
               </div>
               <h1 style={{ margin: 0, fontSize: 28, color: "#fff", fontWeight: 400, lineHeight: 1.2 }}>
-                AI Conceptual Fluency
+                {t.title}
               </h1>
               <p style={{ margin: "8px 0 0", color: "#9ca3af", fontSize: 14, fontFamily: "Arial, sans-serif" }}>
-                6 topic areas · {totalAll} concepts · 2–4 week programme
+                {t.subtitle(totalAll)}
               </p>
             </div>
-            <div style={{ textAlign: "right" }}>
-              <div style={{ fontSize: 36, fontWeight: 400, color: "#fff", lineHeight: 1 }}>{pct}%</div>
-              <div style={{ fontSize: 12, color: "#6b7280", fontFamily: "Arial, sans-serif", marginTop: 4 }}>{totalDone} of {totalAll} complete</div>
-              <div style={{ marginTop: 8, background: "#2d2d4e", borderRadius: 4, height: 6, width: 120, overflow: "hidden" }}>
-                <div style={{ background: "#6366f1", height: "100%", width: `${pct}%`, transition: "width 0.4s ease", borderRadius: 4 }} />
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 12 }}>
+              {/* Language toggle */}
+              <div style={{ display: "flex", background: "#2d2d4e", borderRadius: 8, padding: 3, gap: 2 }}>
+                {["en", "de"].map(l => (
+                  <button
+                    key={l}
+                    onClick={() => switchLang(l)}
+                    style={{
+                      background: lang === l ? "#6366f1" : "transparent",
+                      color: lang === l ? "#fff" : "#9ca3af",
+                      border: "none", borderRadius: 6, padding: "5px 14px",
+                      fontSize: 12, fontFamily: "Arial, sans-serif", fontWeight: 700,
+                      cursor: "pointer", letterSpacing: "0.08em", textTransform: "uppercase",
+                      transition: "all 0.15s"
+                    }}
+                  >
+                    {l === "en" ? "EN" : "DE"}
+                  </button>
+                ))}
+              </div>
+              {/* Progress */}
+              <div style={{ textAlign: "right" }}>
+                <div style={{ fontSize: 36, fontWeight: 400, color: "#fff", lineHeight: 1 }}>{pct}%</div>
+                <div style={{ fontSize: 12, color: "#6b7280", fontFamily: "Arial, sans-serif", marginTop: 4 }}>{t.progressLabel(totalDone, totalAll)}</div>
+                <div style={{ marginTop: 8, background: "#2d2d4e", borderRadius: 4, height: 6, width: 120, overflow: "hidden" }}>
+                  <div style={{ background: "#6366f1", height: "100%", width: `${pct}%`, transition: "width 0.4s ease", borderRadius: 4 }} />
+                </div>
               </div>
             </div>
           </div>
@@ -414,7 +849,7 @@ export default function StudyHub() {
             background: "none", border: "1px solid #d1d5db", borderRadius: 6, padding: "6px 14px",
             fontSize: 13, fontFamily: "Arial, sans-serif", cursor: "pointer", marginBottom: 24, color: "#6b7280"
           }}>
-            ← All topics
+            {t.allTopics}
           </button>
         )}
 
@@ -441,7 +876,7 @@ export default function StudyHub() {
                     <div style={{ fontSize: 28, marginBottom: 10 }}>{topic.icon}</div>
                     <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>{topic.label}</div>
                     <div style={{ fontSize: 12, color: "#9ca3af", fontFamily: "Arial, sans-serif", marginBottom: 14 }}>
-                      {topic.subtopics.length} concepts
+                      {topic.subtopics.length} {t.concepts}
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                       <div style={{ flex: 1, background: "#f3f4f6", borderRadius: 3, height: 4, overflow: "hidden" }}>
@@ -456,29 +891,29 @@ export default function StudyHub() {
               })}
             </div>
 
-            {/* Quick overview strip */}
+            {/* Suggested sequence */}
             <div style={{ background: "#fff", borderRadius: 12, padding: 24, border: "1px solid #e5e7eb" }}>
               <div style={{ fontFamily: "Arial, sans-serif", fontSize: 11, letterSpacing: "0.12em", color: "#9ca3af", marginBottom: 16, textTransform: "uppercase", fontWeight: 600 }}>
-                Suggested sequence
+                {t.suggestedSequence}
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                {topics.map((t, i) => {
-                  const done = t.subtopics.filter(s => completed[s.id]).length;
+                {topics.map((tp, i) => {
+                  const done = tp.subtopics.filter(s => completed[s.id]).length;
                   return (
-                    <div key={t.id} onClick={() => setActiveTopicId(t.id)}
+                    <div key={tp.id} onClick={() => setActiveTopicId(tp.id)}
                       style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer", padding: "6px 0" }}>
                       <div style={{
-                        width: 24, height: 24, borderRadius: "50%", background: done === t.subtopics.length ? t.color : "#f3f4f6",
+                        width: 24, height: 24, borderRadius: "50%", background: done === tp.subtopics.length ? tp.color : "#f3f4f6",
                         display: "flex", alignItems: "center", justifyContent: "center",
                         fontSize: 11, fontFamily: "Arial, sans-serif", fontWeight: 700,
-                        color: done === t.subtopics.length ? "#fff" : "#9ca3af", flexShrink: 0
+                        color: done === tp.subtopics.length ? "#fff" : "#9ca3af", flexShrink: 0
                       }}>{i + 1}</div>
-                      <div style={{ fontFamily: "Arial, sans-serif", fontSize: 14, color: "#374151" }}>{t.label}</div>
-                      {done > 0 && done < t.subtopics.length && (
-                        <div style={{ fontFamily: "Arial, sans-serif", fontSize: 11, color: t.color, marginLeft: "auto" }}>in progress</div>
+                      <div style={{ fontFamily: "Arial, sans-serif", fontSize: 14, color: "#374151" }}>{tp.label}</div>
+                      {done > 0 && done < tp.subtopics.length && (
+                        <div style={{ fontFamily: "Arial, sans-serif", fontSize: 11, color: tp.color, marginLeft: "auto" }}>{t.inProgress}</div>
                       )}
-                      {done === t.subtopics.length && (
-                        <div style={{ fontFamily: "Arial, sans-serif", fontSize: 11, color: t.color, marginLeft: "auto" }}>✓ done</div>
+                      {done === tp.subtopics.length && (
+                        <div style={{ fontFamily: "Arial, sans-serif", fontSize: 11, color: tp.color, marginLeft: "auto" }}>{t.done}</div>
                       )}
                     </div>
                   );
@@ -494,7 +929,7 @@ export default function StudyHub() {
               <div>
                 <h2 style={{ margin: 0, fontSize: 24, fontWeight: 400 }}>{activeTopic.label}</h2>
                 <p style={{ margin: "4px 0 0", fontFamily: "Arial, sans-serif", fontSize: 13, color: "#6b7280" }}>
-                  {activeTopic.subtopics.filter(s => completed[s.id]).length} of {activeTopic.subtopics.length} concepts complete
+                  {t.conceptsComplete(activeTopic.subtopics.filter(s => completed[s.id]).length, activeTopic.subtopics.length)}
                 </p>
               </div>
             </div>
@@ -548,7 +983,7 @@ export default function StudyHub() {
                           borderLeft: `3px solid ${activeTopic.color}`,
                           fontFamily: "Arial, sans-serif", fontSize: 13, color: "#374151", lineHeight: 1.6
                         }}>
-                          <div style={{ fontWeight: 700, fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: activeTopic.color, marginBottom: 6 }}>Mental model</div>
+                          <div style={{ fontWeight: 700, fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: activeTopic.color, marginBottom: 6 }}>{t.mentalModel}</div>
                           {s.content.analogy}
                         </div>
 
@@ -558,7 +993,7 @@ export default function StudyHub() {
                           borderLeft: `3px solid #374151`,
                           fontFamily: "Arial, sans-serif", fontSize: 13, color: "#374151", lineHeight: 1.6
                         }}>
-                          <div style={{ fontWeight: 700, fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: "#374151", marginBottom: 6 }}>Operational implication</div>
+                          <div style={{ fontWeight: 700, fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: "#374151", marginBottom: 6 }}>{t.operationalImplication}</div>
                           {s.content.implication}
                         </div>
 
@@ -571,7 +1006,7 @@ export default function StudyHub() {
                             fontSize: 13, fontFamily: "Arial, sans-serif", cursor: "pointer", fontWeight: 600
                           }}
                         >
-                          {isDone ? "Mark incomplete" : "Mark complete"}
+                          {isDone ? t.markIncomplete : t.markComplete}
                         </button>
                       </div>
                     )}
